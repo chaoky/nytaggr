@@ -41,8 +41,8 @@ docker compose -f deploy-compose.yml up -d
 [[https://www.prisma.io/migrate][Prisma]] is what I usually use for sql migrations
 but since I didn't want to include node_modules in this project
 this setup query has to be ran once
-~on Emacs, just =C-c C-c= the code block below to run it with babel~
 
 #+begin_src sql-mode
 CREATE TABLE headline (link VARCHAR PRIMARY KEY, title VARCHAR NOT NULL);
 #+end_src
+~On Emacs, just C-c C-c the block above to run it with babel~
