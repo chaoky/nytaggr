@@ -44,6 +44,6 @@ object TestRepository {
       Sync[F].delay(newsList)
 
     def insertNews(news: List[HeadLine]): F[Unit] =
-      Sync[F].delay { newsList = news }.map(_ => (()))
+      Sync[F].delay { newsList = newsList.appendedAll(news) }.map(_ => (()))
   }
 }
