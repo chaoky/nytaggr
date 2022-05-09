@@ -46,7 +46,7 @@ lazy val root = (project in file("."))
       "net.ruippeixotog"              %% "scala-scraper"         % "2.2.1",
       "org.seleniumhq.selenium"       % "selenium-chrome-driver" % "4.1.4",
       "org.seleniumhq.selenium"       % "htmlunit-driver"        % "3.61.0",
-
+      "org.flywaydb"                  % "flyway-core"            % "8.5.10"
     ),
     addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.13.2" cross CrossVersion.full),
     addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1"),

@@ -36,13 +36,3 @@ sbt test
 #+begin_src bash
 docker compose -f deploy-compose.yml up -d
 #+end_src
-
-* DataBase
-[[https://www.prisma.io/migrate][Prisma]] is what I usually use for sql migrations
-but since I didn't want to include node_modules in this project
-this setup query has to be ran once
-
-#+begin_src sql-mode
-CREATE TABLE headline (link VARCHAR PRIMARY KEY, title VARCHAR NOT NULL);
-#+end_src
-~On Emacs, just C-c C-c the block above to run it with babel~

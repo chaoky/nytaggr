@@ -13,6 +13,7 @@ import org.http4s.StaticFile
 import doobie.hikari.HikariTransactor
 import doobie.util.ExecutionContexts
 import sttp.client3.http4s._
+import org.flywaydb.core.Flyway
 
 case object Config {
   val dbUrl = sys.env("POSTGRES_URL")
@@ -28,14 +29,25 @@ object NytaggrServer {
       blocker <- Stream.resource(Blocker[F])
       ec <- Stream.resource(ExecutionContexts.cachedThreadPool[F])
       client <- Stream.resource(EmberClientBuilder.default[F].build)
-      transactor <- Stream.resource(HikariTransactor.newHikariTransactor[F](
-        "org.postgresql.Driver",
-        Config.dbUrl,
-        Config.dbUser,
-        Config.dbPassword,
-        ec,
-        blocker
-      ))
+      transactor <- Stream.resource(
+        HikariTransactor.newHikariTransactor[F](
+          "org.postgresql.Driver",
+          Config.dbUrl,
+          Config.dbUser,
+          Config.dbPassword,
+          ec,
+          blocker
+        )
+      )
+      _ <- Stream.eval(
+        transactor.configure(ds =>
+          Sync[F].delay {
+            val flyWay = Flyway.configure().dataSource(ds).load()
+            flyWay.migrate()
+            ()
+          }
+        )
+      )
 
       sttp = Http4sBackend.usingClient(client, blocker)
       repository = QuillRepository.impl[F](transactor)
