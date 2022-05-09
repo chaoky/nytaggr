@@ -1,13 +1,20 @@
-#+title: Readme
+#+title: The New York Times Link Aggregator
 
 Hi,
-since I didn't had a lot of free time this week I decided aganist using Sangria,
+since I didn't had a lot of free time this week I decided against using Sangria,
 which was one of the library constraints, and using Caliban instead,
-since Caliban comes with http4s support there was no need to make a custom wrapper [[https://github.com/tpolecat/doobie-http4s-sangria-graphql-example][like this one]]
+since Caliban comes with http4s support there was no need to make a custom wrapper [[https://github.com/tpolecat/doobie-http4s-sangria-graphql-example][like this one]],
+I may add a Sangria implementation soon
 
 there are two ways of getting articles from [[https://www.nytimes.com/][The New York Times]],
 simply using their http rest API or crawling their web page,
-the scraping happens in a background job every hour (I don't know how often their front page chages)
+since I don't know how often their front page changes,
+the scraping happens in a background job every hour
+
+there's still a lot left to do in this project,
+the tests are pretty poor and the error handling is not [[https://guillaumebogard.dev/posts/functional-error-handling/][ideal]],
+I'm sure there's some inter-op between Cats MTL and ZIO's error channel,
+but I didn't had a lot of time to look into it
 
 * [[./instructions.md][instructions]]
 * Development
@@ -15,7 +22,7 @@ the scraping happens in a background job every hour (I don't know how often thei
 #+begin_src bash
 docker compose up
 #+end_src
-** devlop with sbt-revolver
+** develop with sbt-revolver
 #+begin_src bash
 sbt ~reStart
 #+end_src
