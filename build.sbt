@@ -5,6 +5,8 @@ val LogbackVersion = "1.3.0-alpha14"
 val MunitCatsEffectVersion = "1.0.7"
 
 lazy val root = (project in file("."))
+  .enablePlugins(JavaServerAppPackaging)
+  .enablePlugins(DockerPlugin)
   .settings(
     organization := "moe.lordie",
     name := "nytaggr",
@@ -46,5 +48,11 @@ lazy val root = (project in file("."))
     ),
     addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.13.2" cross CrossVersion.full),
     addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1"),
-    testFrameworks += new TestFramework("munit.Framework")
+    testFrameworks += new TestFramework("munit.Framework"),
+
+    dockerBaseImage := "ghcr.io/graalvm/graalvm-ce:latest",
+    dockerExposedPorts ++= Seq(3000),
+    dockerUpdateLatest := true,
+    dockerRepository := Some("ghcr.io/chaoky"),
+    dockerLabels := Map("org.opencontainers.image.source" -> "https://github.com/chaoky/nytaggr"),
   )
