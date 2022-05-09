@@ -14,31 +14,43 @@ import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.circe.CirceEntityCodec._
 import io.circe.syntax._
 import io.circe.generic.auto._
-import doobie.util.transactor
+import doobie.util.transactor.Transactor
+import io.zonky.test.db.postgres.embedded.EmbeddedPostgres
 
 //TODO tagless final tests?
+object EmbeddedPostgresResource {
+  def apply() = Resource.make(setup)(pg => IO(pg.close()))
+  private def setup = {
+    val pg = EmbeddedPostgres.start()
+    val conn = pg.getPostgresDatabase().getConnection()
+    val s = conn.createStatement()
+    s.executeUpdate("""CREATE TABLE headline (link VARCHAR PRIMARY KEY, title VARCHAR NOT NULL);""")
+    IO(conn)
+  }
+}
 
 class PersistantRepositoryTest extends CatsEffectSuite {
-  val xa = transactor.st(
-    "org.postgresql.Driver",
-    "jdbc:postgresql:postgres",
-    "postgres",
-    "example"
-  )
-  val repo = QuillRepository.impl[IO](xa)
+  val setup = for {
+    blocker <- Blocker[IO]
+    pg <- EmbeddedPostgresResource()
+    xa = Transactor.fromConnection[IO](pg, blocker)
+    repo = QuillRepository.impl[IO](xa)
+  } yield (repo)
 
   test("insert news") {
     val news = List(
-      HeadLine("Lian", "https://youtu.be/z97qLNXeAMQ"),
-      HeadLine("OO", "https://youtu.be/iYcRQBrUbd0")
+      HeadLine("Lilian", "https://youtu.be/z97qLNXeAMQ"),
+      HeadLine("OwO", "https://youtu.be/iYcRQBrUbd0")
     )
-    for {
-      _ <- repo.insertNews(news)
-      fromRepo <- repo.news
-      _ = assert(
-        fromRepo.containsSlice(news)
-      )
-    } yield ()
+    setup.use { repo =>
+      for {
+        _ <- repo.insertNews(news)
+        fromRepo <- repo.news
+        _ = assert(
+          fromRepo.containsSlice(news)
+        )
+      } yield ()
+    }
   }
 }
 
@@ -50,7 +62,7 @@ class ApiScraperTest extends CatsEffectSuite {
     testRepo = TestRepository.impl[IO]
   } yield (sttp, testRepo)
 
-  //TODO check every half a second up to a timeout instead of a blank 5 seconds
+  // TODO check every half a second up to a timeout instead of a blank 5 seconds
   test("updates repository with news") {
     setup.use { case (sttp, testRepo) =>
       for {

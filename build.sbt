@@ -22,6 +22,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "org.scalameta"                 %% "munit"               % MunitVersion           % Test,
       "org.typelevel"                 %% "munit-cats-effect-2" % MunitCatsEffectVersion % Test,
+      "io.zonky.test"                 % "embedded-postgres"   % "1.3.1"                % Test,
       "org.http4s"                    %% "http4s-ember-server" % Http4sVersion,
       "org.http4s"                    %% "http4s-ember-client" % Http4sVersion,
       "org.http4s"                    %% "http4s-circe"        % Http4sVersion,
