@@ -21,15 +21,11 @@ object ApiScraper {
       repo: Repository[F],
       client: SttpBackend[F, Fs2Streams[F]]
   ) = new Scraper[F] {
-    val apiKey = "cAHo6M2zhPBMoWBXyLT7i9BCjtTZAGM0" // TODO move this somewhere
-    def buildUrl(path: String) =
-      uri"https://api.nytimes.com/svc$path?api-key=$apiKey"
-
     case class TopStoriesResponse(results: List[TopStoriesResponseArticles])
     case class TopStoriesResponseArticles(title: String, url: String)
     def topStories: F[Response[TopStoriesResponse]] = basicRequest
       .get(
-        uri"https://api.nytimes.com/svc/topstories/v2/arts.json?api-key=cAHo6M2zhPBMoWBXyLT7i9BCjtTZAGM0"
+        uri"https://api.nytimes.com/svc/topstories/v2/arts.json?api-key=${Config.nytSecrept}"
       )
       .response(asJson[TopStoriesResponse])
       .responseGetRight
