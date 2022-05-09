@@ -27,7 +27,7 @@ object QuillRepository {
 
     //TODO log to slf4j
     def insertNews(news: List[HeadLine]): F[Unit] = {
-      def q = ctx.run(liftQuery(news).foreach(e => query[HeadLine].insert(e)))
+      def q = ctx.run(liftQuery(news).foreach(e => query[HeadLine].insert(e).onConflictIgnore))
       q.transact(xa)
         .map(_ => (()))
         .attemptTap(either =>
