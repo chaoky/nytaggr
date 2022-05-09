@@ -1,4 +1,4 @@
-version: '3.1'
+version: "3.1"
 
 services:
   db:
@@ -7,13 +7,18 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: example
+      POSTGRES_USER: owo
+      POSTGRES_PASSWORD: uwu
 
   nytaggr:
     image: ghcr.io/chaoky/nytaggr:latest
     restart: always
     ports:
       - 3000:3000
+    depends_on:
+      - db
     environment:
-      POSTGRES_PASSWORD: example
-      NYT_SECRET: arnt
+      POSTGRES_URL: jdbc:postgresql://db:5432/owo
+      POSTGRES_USER: owo
+      POSTGRES_PASSWORD: uwu
+      NYT_SECRET: cAHo6M2zhPBMoWBXyLT7i9BCjtTZAGM0
