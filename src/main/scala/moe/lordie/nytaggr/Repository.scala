@@ -15,7 +15,6 @@ trait Repository[F[_]] {
 }
 
 object QuillRepository {
-
   import io.getquill._
   val ctx = new doobie.quill.DoobieContext.Postgres(LowerCase)
   import ctx._
@@ -26,21 +25,25 @@ object QuillRepository {
       q.transact(xa)
     }
 
+    //TODO log to slf4j
     def insertNews(news: List[HeadLine]): F[Unit] = {
       def q = ctx.run(liftQuery(news).foreach(e => query[HeadLine].insert(e)))
-      q.transact(xa).map(_ => (()))
+      q.transact(xa)
+        .map(_ => (()))
+        .attemptTap(either =>
+          Sync[F].delay(either.leftMap((err: Throwable) => Console.err.println(err)))
+        )
     }
   }
 }
 
 object TestRepository {
-  var newsList: List[HeadLine] = List()
-
-  def impl[F[_]: LiftIO] = new Repository[F] {
+  def impl[F[_]: Sync] = new Repository[F] {
+    var newsList: List[HeadLine] = List()
     def news: F[List[HeadLine]] =
-      IO(newsList).to[F]
+      Sync[F].delay(newsList)
 
     def insertNews(news: List[HeadLine]): F[Unit] =
-      IO { newsList = news }.map(_ => (())).to[F]
+      Sync[F].delay { newsList = news }.map(_ => (()))
   }
 }

@@ -5,21 +5,21 @@ import cats.data.Kleisli
 import cats.effect._
 import fs2.Stream
 import org.http4s.implicits._
-import org.http4s.ember.client.EmberClientBuilder
+// import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.middleware.Logger
 import org.http4s.server.Router
 import org.http4s.StaticFile
-import sttp.client3.http4s._
+// import sttp.client3.http4s._
 import doobie.util.transactor
 
 object NytaggrServer {
   def stream[F[_]: ContextShift: Timer: ConcurrentEffect]
       : Stream[F, Nothing] = {
     for {
-      client <- Stream.resource(EmberClientBuilder.default[F].build)
       blocker <- Stream.resource(Blocker[F])
-      sttp = Http4sBackend.usingClient(client, blocker)
+      // client <- Stream.resource(EmberClientBuilder.default[F].build)
+      // sttp = Http4sBackend.usingClient(client, blocker)
       xa = transactor.Transactor.fromDriverManager[F](
         "org.postgresql.Driver",
         "jdbc:postgresql:postgres",
@@ -32,8 +32,11 @@ object NytaggrServer {
         Resource.eval(CalibanGraphQL.impl[F](repository).service)
       )
       _ <- Stream.resource(
-        Concurrent[F].background(ApiScraper.impl[F](repository, sttp).run)
+        Concurrent[F].background(CrawlerScraper.impl[F](repository).run)
       )
+      // _ <- Stream.resource(
+      //   Concurrent[F].background(ApiScraper.impl[F](repository, sttp).run)
+      // )
 
       routes = Router(
         "/api/graphql" -> graphQl,
@@ -57,8 +60,4 @@ object NytaggrServer {
 
     } yield exitCode
   }.drain
-
-  def run[F[_]: ContextShift: Timer: ConcurrentEffect]: F[Unit] =
-    stream[F].compile.drain
-
 }

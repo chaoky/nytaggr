@@ -2,9 +2,8 @@ package moe.lordie.nytaggr
 
 object CatsMain extends cats.effect.IOApp {
   import cats.effect._
-
   def run(args: List[String]) =
-    NytaggrServer.run[IO].as(ExitCode.Success)
+    NytaggrServer.stream[IO].compile.drain.as(ExitCode.Success)
 }
 
 // object MonixMain extends monix.eval.TaskApp {
