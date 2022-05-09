@@ -1,0 +1,31 @@
+#+title: Readme
+
+Hi,
+since I didn't had a lot of free time this week I decided aganist using Sangria,
+which was one of the library constraints, and using Caliban instead,
+since Caliban comes with http4s support there was no need to make a custom wrapper [[https://github.com/tpolecat/doobie-http4s-sangria-graphql-example][like this one]]
+
+there are two ways of getting articles from [[https://www.nytimes.com/][The New York Times]],
+simply using their http rest API or crawling their web page,
+the scraping happens in a background job every hour (I don't know how often their front page chages)
+
+* [[./instructions.md][instructions]]
+* Development
+** setup postgres
+#+begin_src bash
+docker compose up
+#+end_src
+** devlop with sbt-revolver
+#+begin_src bash
+sbt ~reStart
+#+end_src
+** test
+#+begin_src bash
+sbt test
+#+end_src
+
+* Deploy
+** with docker and the github registry
+#+begin_src bash
+docker compose -f deploy-compose.yml up -d
+#+end_src
