@@ -5,7 +5,6 @@ import munit.CatsEffectSuite
 import cats.effect._
 
 class ScraperTest extends CatsEffectSuite {
-  override val munitTimeout = 3.minutes
   val testRepo = TestRepository.impl[IO]
   def waitForUpdate: IO[List[HeadLine]] =
     IO.sleep(500.milliseconds)
