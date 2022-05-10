@@ -16,23 +16,25 @@ the tests are pretty poor and the error handling is not [[https://guillaumebogar
 I'm sure there's some inter-op between Cats MTL and ZIO's error channel,
 but I didn't had a lot of time to look into it
 
-* [[./instructions.md][instructions]]
+* [[./instructions.md][Instructions]]
+* [[http://localhost:3000/graphiql][Graphiql Explorer]]
+
 * Development
-** setup postgres
+- setup Postgres
 #+begin_src bash
 docker compose up
 #+end_src
-** develop with sbt-revolver
+- develop with sbt-revolver
 #+begin_src bash
 sbt ~reStart
 #+end_src
-** test
+- test
 #+begin_src bash
 sbt test
 #+end_src
 
 * Deploy
-** with docker and the github registry
+- docker from the github registry
 #+begin_src bash
 docker compose -f deploy-compose.yml up -d
 #+end_src
