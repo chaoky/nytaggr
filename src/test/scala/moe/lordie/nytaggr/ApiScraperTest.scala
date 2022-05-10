@@ -16,7 +16,7 @@ class ApiScraperTest extends ScraperTest {
     setup.use { sttp =>
       for {
         fromRepoBefore <- testRepo.news
-        job <- ApiScraper.impl[IO](testRepo, sttp).run.start
+        job <- ApiScraper.impl[IO](testRepo, sttp, sys.env("NYT_SECRET")).run.start
         fromRepoAfter <- waitForUpdate
         _ <- job.cancel
         _ = assert(fromRepoAfter.length > fromRepoBefore.length)

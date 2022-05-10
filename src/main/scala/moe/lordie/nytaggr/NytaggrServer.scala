@@ -16,14 +16,14 @@ import sttp.client3.http4s._
 import org.flywaydb.core.Flyway
 import sttp.client3.logging.slf4j.Slf4jLoggingBackend
 
-case object Config {
-  val dbUrl = sys.env("POSTGRES_URL")
-  val dbUser = sys.env("POSTGRES_USER")
-  val dbPassword = sys.env("POSTGRES_PASSWORD")
-  val nytSecrept = sys.env("NYT_SECRET")
-}
-
 object NytaggrServer {
+  object Config {
+    val dbUrl = sys.env("POSTGRES_URL")
+    val dbUser = sys.env("POSTGRES_USER")
+    val dbPassword = sys.env("POSTGRES_PASSWORD")
+    val nytSecrept = sys.env("NYT_SECRET")
+  }
+
   def stream[F[_]: ContextShift: Timer: ConcurrentEffect]
       : Stream[F, Nothing] = {
     for {
@@ -59,7 +59,9 @@ object NytaggrServer {
         Concurrent[F].background(CrawlerScraper.impl[F](repository).run)
       )
       _ <- Stream.resource(
-        Concurrent[F].background(ApiScraper.impl[F](repository, sttp).run)
+        Concurrent[F].background(
+          ApiScraper.impl[F](repository, sttp, Config.nytSecrept).run
+        )
       )
 
       routes = Router(

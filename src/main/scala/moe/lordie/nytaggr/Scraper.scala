@@ -19,13 +19,14 @@ trait Scraper[F[_]] {
 object ApiScraper {
   def impl[F[_]: Async: Timer](
       repo: Repository[F],
-      client: SttpBackend[F, Fs2Streams[F]]
+      client: SttpBackend[F, Fs2Streams[F]],
+      apiSecret: String
   ) = new Scraper[F] {
     case class TopStoriesResponse(results: List[TopStoriesResponseArticles])
     case class TopStoriesResponseArticles(title: String, url: String)
     def topStories: F[Response[TopStoriesResponse]] = basicRequest
       .get(
-        uri"https://api.nytimes.com/svc/topstories/v2/arts.json?api-key=${Config.nytSecrept}"
+        uri"https://api.nytimes.com/svc/topstories/v2/arts.json?api-key=$apiSecret"
       )
       .response(asJson[TopStoriesResponse])
       .responseGetRight
