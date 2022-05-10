@@ -3,12 +3,13 @@ package moe.lordie.nytaggr
 import sttp.client3.http4s._
 import cats.effect._
 import org.http4s.ember.client.EmberClientBuilder
+import sttp.client3.logging.slf4j.Slf4jLoggingBackend
 
 class ApiScraperTest extends ScraperTest {
   val setup = for {
     client <- EmberClientBuilder.default[IO].build
     blocker <- Blocker[IO]
-    sttp = Http4sBackend.usingClient(client, blocker)
+    sttp = Slf4jLoggingBackend(Http4sBackend.usingClient(client, blocker))
   } yield (sttp)
 
   test("api updates repository with news") {

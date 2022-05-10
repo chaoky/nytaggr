@@ -14,6 +14,7 @@ import doobie.hikari.HikariTransactor
 import doobie.util.ExecutionContexts
 import sttp.client3.http4s._
 import org.flywaydb.core.Flyway
+import sttp.client3.logging.slf4j.Slf4jLoggingBackend
 
 case object Config {
   val dbUrl = sys.env("POSTGRES_URL")
@@ -49,7 +50,7 @@ object NytaggrServer {
         )
       )
 
-      sttp = Http4sBackend.usingClient(client, blocker)
+      sttp = Slf4jLoggingBackend(Http4sBackend.usingClient(client, blocker))
       repository = QuillRepository.impl[F](transactor)
       graphQl <- Stream.resource(
         Resource.eval(CalibanGraphQL.impl[F](repository).service)

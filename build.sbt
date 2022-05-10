@@ -38,6 +38,7 @@ lazy val root = (project in file("."))
       "org.tpolecat"                  %% "doobie-postgres"       % DoobieVersion,
       "com.softwaremill.sttp.client3" %% "http4s-ce2-backend"    % SttpVersion,
       "com.softwaremill.sttp.client3" %% "circe"                 % SttpVersion,
+      "com.softwaremill.sttp.client3" %% "slf4j-backend"         % SttpVersion,
       "org.scalameta"                 %% "svm-subs"              % "20.2.0",
       "io.monix"                      %% "monix"                 % "3.4.0",
       "dev.zio"                       %% "zio"                   % "1.0.14",
