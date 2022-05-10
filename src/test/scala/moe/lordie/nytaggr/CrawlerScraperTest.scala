@@ -5,6 +5,7 @@ import munit.CatsEffectSuite
 import cats.effect._
 
 class CrawlerScraperTest extends CatsEffectSuite {
+  override val munitTimeout = 1.minute
   val testRepo = TestRepository.impl[IO]
 
   // TODO check every half a second up to a timeout instead of a blank 5 seconds

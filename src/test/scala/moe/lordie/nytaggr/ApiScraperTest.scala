@@ -7,6 +7,7 @@ import cats.effect._
 import org.http4s.ember.client.EmberClientBuilder
 
 class ApiScraperTest extends CatsEffectSuite {
+  override val munitTimeout = 1.minute
   val setup = for {
     client <- EmberClientBuilder.default[IO].build
     blocker <- Blocker[IO]
